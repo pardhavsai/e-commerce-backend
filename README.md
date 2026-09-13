@@ -1,6 +1,6 @@
 # E-Commerce Backend
 
-A RESTful e-commerce backend built with Java and Spring Boot. The project demonstrates layered backend architecture, REST APIs, JPA persistence, entity relationships, cart operations, and order management.
+A RESTful e-commerce backend built with Java and Spring Boot. It demonstrates layered backend architecture, REST APIs, JPA persistence, relational entity relationships, cart operations, stock management, and checkout/order processing.
 
 ## Tech Stack
 - Java 17
@@ -11,23 +11,26 @@ A RESTful e-commerce backend built with Java and Spring Boot. The project demons
 - Maven
 
 ## Features
-- User creation and retrieval
+- User creation, retrieval, and deletion
 - Product CRUD and name search
 - Shopping cart creation and item management
-- Order retrieval and status updates
-- MySQL persistence through Spring Data JPA
-- Controller-based REST API design
+- Stock validation when adding items to a cart
+- Checkout directly from the cart
+- Automatic stock reduction after checkout
+- Order retrieval by ID or user
+- Order status updates
+- Request validation and centralized exception handling
 
 ## Architecture
-The application follows a simple layered structure:
+The application follows a layered structure:
 
-`Controller -> Service/Repository layer -> Database`
+`Controller -> Service -> Repository -> MySQL`
 
-The current implementation keeps the business logic intentionally small so the core Spring Boot, REST, JPA, and relational-database concepts are easy to understand and extend.
+Controllers handle HTTP requests, services contain business logic, repositories handle persistence through Spring Data JPA, and MySQL stores application data.
 
 ## Database Setup
 1. Create a MySQL database named `ecommerce_db`.
-2. Update the environment variables below if your MySQL credentials differ:
+2. Set these environment variables if your MySQL credentials differ from the defaults:
 
 ```text
 DB_URL=jdbc:mysql://localhost:3306/ecommerce_db
@@ -51,7 +54,7 @@ The API starts on `http://localhost:8080`.
 - `POST /api/users`
 - `DELETE /api/users/{id}`
 
-Example user JSON:
+Example:
 ```json
 {"name":"Pardhav","email":"pardhav@example.com"}
 ```
@@ -64,7 +67,7 @@ Example user JSON:
 - `PUT /api/products/{id}`
 - `DELETE /api/products/{id}`
 
-Example product JSON:
+Example:
 ```json
 {"name":"Wireless Headphones","price":2499.0,"stock":20}
 ```
@@ -73,17 +76,36 @@ Example product JSON:
 - `POST /api/carts/{userId}`
 - `GET /api/carts/{userId}/items`
 - `POST /api/carts/{userId}/items?productId=1&quantity=2`
+- `PATCH /api/carts/items/{itemId}?quantity=3`
 - `DELETE /api/carts/items/{itemId}`
 
 ### Orders
+- `POST /api/orders/checkout/{userId}`
 - `GET /api/orders`
 - `GET /api/orders/{id}`
 - `GET /api/orders/user/{userId}`
 - `PATCH /api/orders/{id}/status?status=SHIPPED`
 
+## Project Structure
+
+```text
+src/main/java/com/pardhavsai/ecommerce
+├── controller
+├── entity
+├── exception
+├── repository
+└── service
+```
+
+## Testing
+Run the test suite with:
+
+```bash
+mvn test
+```
+
 ## Future Improvements
-- Service layer for business logic
-- DTOs and centralized exception handling
-- Order creation directly from the cart
+- DTOs for API request/response models
 - Authentication and authorization
-- Automated unit and integration tests
+- Pagination for product and order queries
+- Integration tests with a dedicated test database
