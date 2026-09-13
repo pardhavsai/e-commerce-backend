@@ -11,14 +11,14 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String,Object>> handleRuntime(RuntimeException ex){
-        return response(HttpStatus.NOT_FOUND, ex.getMessage());
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String,Object>> handleBadRequest(IllegalArgumentException ex){
         return response(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String,Object>> handleRuntime(RuntimeException ex){
+        return response(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,8 +34,10 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Map<String,Object>> response(HttpStatus status, String message){
         Map<String,Object> body=new HashMap<>();
-        body.put("timestamp", LocalDateTime.now()); body.put("status", status.value());
-        body.put("error", status.getReasonPhrase()); body.put("message", message);
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
         return ResponseEntity.status(status).body(body);
     }
 }
